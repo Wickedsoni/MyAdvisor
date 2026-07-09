@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # Apple targets are skipped automatically on Linux; iOS builds happen
+      # in Xcode on macOS. This job covers common + Android: compile, lint,
+      # and the shared-code unit tests (JVM host).
+      - name: Build, lint and test
+        run: ./gradlew :androidApp:assembleDebug :androidApp:lintDebug :domain:testAndroidHostTest :data:testAndroidHostTest :shared:testAndroidHostTest
