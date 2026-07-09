@@ -62,3 +62,17 @@ kotlin {
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
 }
+
+// data/cards.json is the canonical dataset (ADR-004); bundle it into compose
+// resources at build time instead of keeping a second copy in the source tree.
+val prepareDatasetResources by tasks.registering(Copy::class) {
+    from(rootProject.layout.projectDirectory.file("data/cards.json")) { into("files") }
+    into(layout.buildDirectory.dir("generated/datasetResources"))
+}
+
+compose.resources {
+    customDirectory(
+        sourceSetName = "commonMain",
+        directoryProvider = layout.dir(prepareDatasetResources.map { it.destinationDir }),
+    )
+}

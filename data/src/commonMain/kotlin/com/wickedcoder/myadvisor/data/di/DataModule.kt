@@ -2,6 +2,8 @@ package com.wickedcoder.myadvisor.data.di
 
 import com.wickedcoder.myadvisor.data.db.AppDatabase
 import com.wickedcoder.myadvisor.data.db.createAppDatabase
+import com.wickedcoder.myadvisor.data.importer.BundledDatasetImporter
+import com.wickedcoder.myadvisor.data.importer.DatasetImporter
 import com.wickedcoder.myadvisor.data.repository.RoomCardCatalogRepository
 import com.wickedcoder.myadvisor.data.repository.RoomDatasetMetaRepository
 import com.wickedcoder.myadvisor.data.repository.RoomUserCardsRepository
@@ -19,6 +21,9 @@ val dataModule = module {
     single { get<AppDatabase>().catalogDao() }
     single { get<AppDatabase>().userCardsDao() }
     single { get<AppDatabase>().datasetMetaDao() }
+    single { get<AppDatabase>().importDao() }
+
+    single<DatasetImporter> { BundledDatasetImporter(get(), get(), get(), get()) }
 
     single<CardCatalogRepository> { RoomCardCatalogRepository(get()) }
     single<UserCardsRepository> { RoomUserCardsRepository(get(), get()) }

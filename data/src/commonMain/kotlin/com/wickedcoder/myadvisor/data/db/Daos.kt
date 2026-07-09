@@ -3,6 +3,7 @@ package com.wickedcoder.myadvisor.data.db
 import androidx.room.Dao
 import androidx.room.Embedded
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Relation
 import androidx.room.Transaction
@@ -42,7 +43,10 @@ interface UserCardsDao {
     @Query("SELECT * FROM user_cards ORDER BY sortOrder, cardId")
     fun observeUserCards(): Flow<List<UserCardEntity>>
 
-    @Insert
+    @Query("SELECT cardId FROM user_cards")
+    suspend fun getOwnedCardIds(): List<String>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun add(userCard: UserCardEntity)
 
     @Query("DELETE FROM user_cards WHERE cardId = :cardId")

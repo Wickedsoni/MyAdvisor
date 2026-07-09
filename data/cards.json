@@ -1,15 +1,165 @@
 {
   "schemaVersion": 1,
-  "dataVersion": "0.0.1",
+  "dataVersion": "1.0.0",
   "generatedAt": "2026-07-10",
 
-  "issuers": [],
+  "issuers": [
+    { "id": "axis", "name": "Axis Bank" },
+    { "id": "hdfc", "name": "HDFC Bank" }
+  ],
 
-  "categories": [],
+  "categories": [
+    { "id": "dining", "name": "Dining" },
+    { "id": "groceries", "name": "Groceries" },
+    { "id": "online_shopping", "name": "Online Shopping" },
+    { "id": "utilities", "name": "Utilities & Bill Payments" },
+    { "id": "travel", "name": "Travel" },
+    { "id": "entertainment", "name": "Entertainment" }
+  ],
 
-  "merchantFamilies": [],
+  "merchantFamilies": [
+    { "id": "amazon", "name": "Amazon" }
+  ],
 
-  "merchants": [],
+  "merchants": [
+    { "id": "amazon_in", "familyId": "amazon", "name": "Amazon.in", "categoryId": "online_shopping" },
+    { "id": "amazon_fresh", "familyId": "amazon", "name": "Amazon Fresh", "categoryId": "groceries" },
+    { "id": "amazon_pay_gc", "familyId": "amazon", "name": "Amazon Pay Gift Cards", "categoryId": "online_shopping" },
+    { "id": "swiggy", "name": "Swiggy", "categoryId": "dining" },
+    { "id": "zomato", "name": "Zomato", "categoryId": "dining" },
+    { "id": "flipkart", "name": "Flipkart", "categoryId": "online_shopping" },
+    { "id": "myntra", "name": "Myntra", "categoryId": "online_shopping" },
+    { "id": "bigbasket", "name": "BigBasket", "categoryId": "groceries" },
+    { "id": "blinkit", "name": "Blinkit", "categoryId": "groceries" },
+    { "id": "makemytrip", "name": "MakeMyTrip", "categoryId": "travel" },
+    { "id": "bookmyshow", "name": "BookMyShow", "categoryId": "entertainment" }
+  ],
 
-  "cards": []
+  "cards": [
+    {
+      "id": "axis_ace",
+      "issuerId": "axis",
+      "name": "Axis ACE",
+      "lastVerified": "2026-07-10",
+      "researchRef": "research/axis/ace/",
+      "baseRule": {
+        "id": "axis_ace_base",
+        "priority": 1000,
+        "condition": { "type": "always" },
+        "reward": { "effectiveRatePct": 1.5, "earnDescription": "1.5% unlimited cashback" }
+      },
+      "rules": [
+        {
+          "id": "axis_ace_billpay",
+          "priority": 10,
+          "condition": { "type": "category", "categoryId": "utilities" },
+          "reward": { "effectiveRatePct": 5.0, "earnDescription": "5% cashback on bill payments via Google Pay" },
+          "cap": { "amountInr": 500, "period": "CALENDAR_MONTH" },
+          "paymentRoute": { "id": "google_pay", "name": "Google Pay", "instruction": "Pay the bill through Google Pay to earn 5%" }
+        },
+        {
+          "id": "axis_ace_swiggy",
+          "priority": 20,
+          "condition": { "type": "merchant", "merchantId": "swiggy" },
+          "reward": { "effectiveRatePct": 4.0, "earnDescription": "4% cashback on Swiggy (shared ₹500 cap with Zomato, modeled per-merchant)" },
+          "cap": { "amountInr": 500, "period": "CALENDAR_MONTH" }
+        },
+        {
+          "id": "axis_ace_zomato",
+          "priority": 21,
+          "condition": { "type": "merchant", "merchantId": "zomato" },
+          "reward": { "effectiveRatePct": 4.0, "earnDescription": "4% cashback on Zomato (shared ₹500 cap with Swiggy, modeled per-merchant)" },
+          "cap": { "amountInr": 500, "period": "CALENDAR_MONTH" }
+        }
+      ],
+      "exclusions": [
+        { "target": { "type": "transactionType", "value": "WALLET_LOAD" }, "scope": "FULL" },
+        { "target": { "type": "transactionType", "value": "RENT" }, "scope": "FULL" },
+        { "target": { "type": "transactionType", "value": "FUEL" }, "scope": "FULL" },
+        { "target": { "type": "transactionType", "value": "EMI" }, "scope": "FULL" },
+        { "target": { "type": "merchant", "merchantId": "amazon_pay_gc" }, "scope": "ACCELERATED_ONLY" }
+      ]
+    },
+    {
+      "id": "hdfc_swiggy",
+      "issuerId": "hdfc",
+      "name": "HDFC Swiggy Card",
+      "lastVerified": "2026-07-10",
+      "researchRef": "research/hdfc/swiggy/",
+      "baseRule": {
+        "id": "hdfc_swiggy_base",
+        "priority": 1000,
+        "condition": { "type": "always" },
+        "reward": { "effectiveRatePct": 1.0, "earnDescription": "1% cashback (credited as Swiggy Money)" }
+      },
+      "rules": [
+        {
+          "id": "hdfc_swiggy_merchant",
+          "priority": 10,
+          "condition": { "type": "merchant", "merchantId": "swiggy" },
+          "reward": { "effectiveRatePct": 10.0, "earnDescription": "10% cashback on Swiggy (food, Instamart, Dineout)" },
+          "cap": { "amountInr": 1500, "period": "CALENDAR_MONTH" }
+        },
+        {
+          "id": "hdfc_swiggy_online",
+          "priority": 20,
+          "condition": { "type": "category", "categoryId": "online_shopping" },
+          "reward": { "effectiveRatePct": 5.0, "earnDescription": "5% cashback on online spends" },
+          "cap": { "amountInr": 1500, "period": "CALENDAR_MONTH" }
+        }
+      ],
+      "exclusions": [
+        { "target": { "type": "transactionType", "value": "FUEL" }, "scope": "FULL" },
+        { "target": { "type": "transactionType", "value": "RENT" }, "scope": "FULL" },
+        { "target": { "type": "transactionType", "value": "WALLET_LOAD" }, "scope": "FULL" }
+      ]
+    },
+    {
+      "id": "hdfc_regalia_gold",
+      "issuerId": "hdfc",
+      "name": "HDFC Regalia Gold",
+      "lastVerified": "2026-07-10",
+      "researchRef": "research/hdfc/regalia-gold/",
+      "baseRule": {
+        "id": "hdfc_regalia_gold_base",
+        "priority": 1000,
+        "condition": { "type": "always" },
+        "reward": {
+          "effectiveRatePct": 1.33,
+          "earnDescription": "4 Reward Points per ₹150",
+          "valuationNote": "1 RP valued at ₹0.50 (conservative; flight/hotel redemptions can reach higher)"
+        }
+      },
+      "rules": [
+        {
+          "id": "hdfc_regalia_gold_smartbuy_travel",
+          "priority": 10,
+          "condition": { "type": "category", "categoryId": "travel" },
+          "reward": {
+            "effectiveRatePct": 6.65,
+            "earnDescription": "5X Reward Points (20 RP per ₹150) on travel via SmartBuy",
+            "valuationNote": "1 RP valued at ₹0.50 (conservative)"
+          },
+          "cap": { "amountInr": 2000, "period": "CALENDAR_MONTH" },
+          "paymentRoute": { "id": "smartbuy", "name": "HDFC SmartBuy", "instruction": "Book through the SmartBuy portal to earn 5X points" }
+        },
+        {
+          "id": "hdfc_regalia_gold_myntra",
+          "priority": 20,
+          "condition": { "type": "merchant", "merchantId": "myntra" },
+          "reward": {
+            "effectiveRatePct": 6.65,
+            "earnDescription": "5X Reward Points on Myntra",
+            "valuationNote": "1 RP valued at ₹0.50 (conservative)"
+          },
+          "cap": { "amountInr": 2500, "period": "CALENDAR_MONTH" }
+        }
+      ],
+      "exclusions": [
+        { "target": { "type": "transactionType", "value": "WALLET_LOAD" }, "scope": "FULL" },
+        { "target": { "type": "transactionType", "value": "RENT" }, "scope": "FULL" },
+        { "target": { "type": "transactionType", "value": "GOVERNMENT" }, "scope": "FULL" }
+      ]
+    }
+  ]
 }

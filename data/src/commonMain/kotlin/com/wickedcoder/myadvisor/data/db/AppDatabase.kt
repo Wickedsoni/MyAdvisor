@@ -31,6 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun catalogDao(): CatalogDao
     abstract fun userCardsDao(): UserCardsDao
     abstract fun datasetMetaDao(): DatasetMetaDao
+    abstract fun importDao(): ImportDao
 }
 
 // The Room KMP compiler generates the actual implementations per target.
