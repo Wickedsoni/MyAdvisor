@@ -66,24 +66,49 @@ class DefaultRecommendationEngine(
         val winner = eligible.firstOrNull()
             ?: return fullyExcludedRecommendation(card, context, amountInr, reason = "no applicable rule")
 
-        val value = effectiveValue(winner, amountInr)                               // Step 5
+        // Step 7 — route variants. If the winning rule is route-gated but the card also
+        // has an eligible route-free rule, keep the route rule primary (it ranked first,
+        // so it's the better deal) and attach the best direct rule as the alternative.
+        // If a route-free rule already ranked first, or none is eligible, there is no
+        // alternative to show.
+        val directAlternative = if (winner.paymentRoute != null) {
+            eligible.firstOrNull { it.paymentRoute == null }?.let { routeFree ->
+                buildRecommendation(card, routeFree, eligible.filter { it.paymentRoute == null }, amountInr, exclusionNotes)
+            }
+        } else {
+            null
+        }
 
+        return buildRecommendation(card, winner, eligible, amountInr, exclusionNotes, directAlternative)
+    }
+
+    /** Assemble one [Recommendation] from a chosen rule (Step 5 value math + Step 8 explanation). */
+    private fun buildRecommendation(
+        card: Card,
+        rule: RewardRule,
+        provenanceEligible: List<RewardRule>,
+        amountInr: Int?,
+        exclusionNotes: List<String>,
+        directAlternative: Recommendation? = null,
+    ): Recommendation {
+        val value = effectiveValue(rule, amountInr)                                 // Step 5
         return Recommendation(
             card = card,
-            winningRule = winner,
-            nominalRatePct = winner.reward.effectiveRatePct,
+            winningRule = rule,
+            nominalRatePct = rule.reward.effectiveRatePct,
             effectiveValueInr = value.valueInr,
             effectiveRatePct = value.ratePct,
-            capCaveat = winner.cap?.let(::capCaveatFor),
-            routeInstruction = winner.paymentRoute?.instruction,                    // Step 7
+            capCaveat = rule.cap?.let(::capCaveatFor),
+            routeInstruction = rule.paymentRoute?.instruction,                      // Step 7
             explanation = Explanation(                                              // Step 8
-                ruleProvenance = provenance(winner, eligible),
-                earnDescription = winner.reward.earnDescription,
-                valuationNote = winner.reward.valuationNote,
+                ruleProvenance = provenance(rule, provenanceEligible),
+                earnDescription = rule.reward.earnDescription,
+                valuationNote = rule.reward.valuationNote,
                 exclusionNotes = exclusionNotes,
                 dataVerified = card.lastVerified,
                 dataVersion = dataVersion,
             ),
+            directAlternative = directAlternative,
         )
     }
 

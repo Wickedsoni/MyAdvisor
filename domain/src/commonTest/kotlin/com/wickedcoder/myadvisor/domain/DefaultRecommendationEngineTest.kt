@@ -277,6 +277,91 @@ class DefaultRecommendationEngineTest {
         assertEquals("Book via the SmartBuy portal", result.routeInstruction)
     }
 
+    // A1 — route variants (Spec §5 Step 7): route rule wins, direct rule rides along.
+    @Test
+    fun `route rule wins and attaches the direct route-free rule as alternative`() {
+        val regalia = card(
+            "regalia",
+            baseRatePct = 1.33,
+            rules = listOf(
+                rule(
+                    "smartbuy_travel",
+                    priority = 30,
+                    condition = Condition.CategoryIs("groceries"),
+                    ratePct = 6.65,
+                    route = PaymentRoute("smartbuy", "SmartBuy", "Book via the SmartBuy portal"),
+                ),
+            ),
+        )
+        val result = engine().recommend(PurchaseQuery(categoryId = "groceries"), listOf(regalia)).single()
+
+        // primary = the route rule
+        assertEquals("smartbuy_travel", result.winningRule.id)
+        assertEquals(6.65, result.effectiveRatePct)
+        assertEquals("Book via the SmartBuy portal", result.routeInstruction)
+
+        // alternative = the direct (base) rule, route-free and un-nested
+        val alt = assertNotNull(result.directAlternative)
+        assertEquals("regalia_base", alt.winningRule.id)
+        assertEquals(1.33, alt.effectiveRatePct)
+        assertNull(alt.routeInstruction)
+        assertNull(alt.directAlternative)
+    }
+
+    // A1 — a route-free rule ranking first yields no alternative, even if a (worse)
+    // route rule is also eligible ("if the route-free rule would rank better, it stays
+    // primary and no alternative is attached").
+    @Test
+    fun `route-free winner keeps no alternative even when a route rule is eligible`() {
+        val mixed = card(
+            "mixed",
+            rules = listOf(
+                rule("direct_cat", priority = 30, condition = Condition.CategoryIs("groceries"), ratePct = 5.0),
+                rule(
+                    "portal_cat",
+                    priority = 40,
+                    condition = Condition.CategoryIs("groceries"),
+                    ratePct = 6.0,
+                    route = PaymentRoute("portal", "Portal", "Pay via Portal"),
+                ),
+            ),
+        )
+        val result = engine().recommend(PurchaseQuery(categoryId = "groceries"), listOf(mixed)).single()
+        assertEquals("direct_cat", result.winningRule.id) // route-free wins on priority
+        assertNull(result.routeInstruction)
+        assertNull(result.directAlternative)
+    }
+
+    // A1 — a route-only card (no route-free rule eligible at all) emits no alternative.
+    @Test
+    fun `route-only card emits no direct alternative`() {
+        val wallet = PaymentRoute("wallet", "Wallet", "Pay via the Wallet app")
+        val base = card("portal_only")
+        val routeOnly = base.copy(
+            baseRule = base.baseRule.copy(paymentRoute = wallet), // even base is route-gated
+            rules = listOf(rule("portal_bonus", ratePct = 6.0, route = wallet)),
+        )
+        val result = engine().recommend(PurchaseQuery(categoryId = "groceries"), listOf(routeOnly)).single()
+        assertEquals("portal_bonus", result.winningRule.id)
+        assertNotNull(result.routeInstruction)
+        assertNull(result.directAlternative)
+    }
+
+    // A1 — determinism holds with nested route variants.
+    @Test
+    fun `route variant output is deterministic`() {
+        val regalia = card(
+            "regalia",
+            baseRatePct = 1.33,
+            rules = listOf(
+                rule("smartbuy", ratePct = 6.65, route = PaymentRoute("sb", "SmartBuy", "Book via SmartBuy")),
+            ),
+        )
+        val query = PurchaseQuery(categoryId = "groceries", amountInr = 10_000)
+        val first = engine().recommend(query, listOf(regalia))
+        repeat(5) { assertEquals(first, engine().recommend(query, listOf(regalia))) }
+    }
+
     // §7.9 — full determinism, including input-order independence
     @Test
     fun `identical query and cards give identical ordered output repeatedly`() {

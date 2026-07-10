@@ -21,6 +21,11 @@ data class Recommendation(
     val capCaveat: String?,            // "Assumes you haven't used this month's ₹1,500 cap"
     val routeInstruction: String?,     // Phase 3 UI; populated when winningRule has a paymentRoute
     val explanation: Explanation,
+    // Spec §5 Step 7: when the winning rule is route-gated (e.g. via SmartBuy) and the
+    // same card also has an eligible route-free rule, that direct rule's recommendation
+    // rides along here ("6.65% via SmartBuy / 1.33% paying directly"). Null when the
+    // winner is already route-free, or when no route-free rule is eligible. Never nested.
+    val directAlternative: Recommendation? = null,
 )
 
 data class Explanation(
