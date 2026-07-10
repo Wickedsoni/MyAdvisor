@@ -49,7 +49,7 @@ Redesign the UI to feel like a premium fintech app. Principles: Material 3 Expre
 **DoD:** both themes render; components used nowhere yet but previewable; all 47+ tests green; APK builds.
 **Verify:** build + emulator launch in light AND dark (`adb shell "cmd uimode night yes|no"`), screenshot both.
 
-### [ ] E2 — Recommend screen redesign
+### [x] E2 — Recommend screen redesign
 `Model: sonnet · Prereqs: E1 · Touches: :shared`
 **Context:** `ui/recommend/RecommendScreen.kt`, `RecommendViewModel` (contract frozen); E1 components.
 **Create/Modify:** `ui/recommend/RecommendScreen.kt` (rewrite presentation only).
@@ -57,7 +57,7 @@ Redesign the UI to feel like a premium fintech app. Principles: Material 3 Expre
 **DoD:** zero ViewModel changes; screen matches brief in both themes.
 **Verify:** emulator flow Swiggy + ₹20,000 → screenshot light + dark; confirm #1 = HDFC Swiggy 7.5% with caveat rendered.
 
-### [ ] E3 — Catalog + My Cards redesign
+### [x] E3 — Catalog + My Cards redesign
 `Model: sonnet · Prereqs: E1 · Touches: :shared`
 **Context:** `ui/home/HomeScreen.kt` (`CardList`, `CatalogCardRow`); `CardsViewModel` (contract frozen).
 **Create/Modify:** extract `ui/cards/CatalogScreen.kt` + `ui/cards/MyCardsScreen.kt` from `HomeScreen`'s inline lists; use `CardTile`.
@@ -65,7 +65,7 @@ Redesign the UI to feel like a premium fintech app. Principles: Material 3 Expre
 **DoD:** zero ViewModel changes; both themes.
 **Verify:** emulator add/remove flow screenshots.
 
-### [ ] E4 — App chrome + accessibility pass
+### [x] E4 — App chrome + accessibility pass
 `Model: sonnet · Prereqs: E2, E3 · Touches: :shared`
 **Context:** `ui/home/HomeScreen.kt`; android-accessibility skill checklist.
 **Create/Modify:** `HomeScreen.kt` (chrome), touched screens for a11y fixes.
@@ -73,7 +73,7 @@ Redesign the UI to feel like a premium fintech app. Principles: Material 3 Expre
 **DoD:** all screens navigable one-handed; a11y checklist items ticked in the PR description.
 **Verify:** emulator screenshots of all 3 tabs × 2 themes.
 
-### [ ] E5 — Visual QA screenshot suite
+### [x] E5 — Visual QA screenshot suite
 `Model: sonnet · Prereqs: E2–E4 · Touches: docs only`
 **Create/Modify:** `docs/screenshots/` (`recommend_light.png`, `recommend_dark.png`, …), `docs/screenshots/README.md` with the capture script.
 **Steps:** scripted adb capture of every screen (empty + populated states) × light/dark; store the exact PowerShell script used.
@@ -83,7 +83,7 @@ Redesign the UI to feel like a premium fintech app. Principles: Material 3 Expre
 
 ## Track A — Phase 3: merchant rates & portal routing
 
-### [ ] A1 — Engine route variants (Spec §5 Step 7, full)
+### [x] A1 — Engine route variants (Spec §5 Step 7, full)
 `Model: opus · Prereqs: none · Touches: :domain`
 **Context:** `docs/design/rule-engine-spec.md` §5 Step 7; `domain/.../engine/DefaultRecommendationEngine.kt`, `EngineIO.kt`, `DefaultRecommendationEngineTest.kt`.
 **Create/Modify:** `EngineIO.kt` — `Recommendation` gains `val directAlternative: Recommendation? = null` (naming decision: nested single alternative, not a list — keeps ranking stable on the primary). `DefaultRecommendationEngine.kt` — when a card's winning rule has a `paymentRoute` AND a route-free rule is also eligible, rank on the route rule (it's the better rate) and attach the best route-free rule's recommendation as `directAlternative` ("1.33% direct / 6.65% via SmartBuy"). If the route-free rule would rank *better*, it stays primary and no alternative is attached (current behavior).
@@ -154,7 +154,8 @@ Redesign the UI to feel like a premium fintech app. Principles: Material 3 Expre
 
 ## Track C — Data curation (human-in-the-loop)
 
-### [x] C0 — Align Phase 1 output with the curation guide
+### [ ] C0 — Align Phase 1 output with the curation guide — **REDO (work lost)**
+**2026-07-11 audit:** this session's file changes were never committed and are lost (`research/` still has `sources.md`, priorities still off-band) — task must be redone; see `docs/launch-directive.md` I-1 / R1-1.
 `Model: sonnet · Prereqs: none — DO THIS FIRST · Touches: research/, data/cards.json`
 **Context:** curation guide §4 (NOTES.md template) + §6 (priority bands); the Phase 1 files used `sources.md` and off-band priorities.
 **Steps:** rename `research/*/*/sources.md` → `NOTES.md`, restructure to the §4 template (sources, rules-extracted table with confidence, exclusions, judgment calls, open questions — carry over existing content incl. the shared-cap modeling note); renumber `cards.json` priorities into bands: `axis_ace_billpay` (category) 10→30, `axis_ace_swiggy` 20→10, `axis_ace_zomato` 21→11, `hdfc_swiggy_merchant` stays 10, `hdfc_swiggy_online` (category) 20→30, `hdfc_regalia_gold_smartbuy_travel` (category) 10→30, `hdfc_regalia_gold_myntra` (merchant) 20→10; patch `dataVersion` → 1.0.1; check `BundledDatasetValidationTest` (it asserts folder existence, not filename — confirm).
@@ -164,13 +165,15 @@ Redesign the UI to feel like a premium fintech app. Principles: Material 3 Expre
 `Model: sonnet · Prereqs: C0 · Touches: research/`
 **Create/Modify:** `research/_TEMPLATE/NOTES.md` — blank §4 template + §6 workflow checklist + §9 red-flags list inline.
 
-### [x] C2 — Verify the 3 seed cards *(agent-drafts / HUMAN SIGNS OFF)*
+### [ ] C2 — Verify the 3 seed cards *(agent-drafts / HUMAN SIGNS OFF)* — **REDO (work lost)**
+**2026-07-11 audit:** the status below describes work whose file changes were never committed and are lost (no archived PDFs in `research/`, `cards.json` still v1.0.0 with the uncorrected rules) — task must be redone; the known corrections are preserved in `docs/launch-directive.md` R1-2.
 `Model: sonnet + WebSearch · Prereqs: C0 · Touches: research/, data/cards.json`
 **Steps:** for Axis ACE, HDFC Swiggy, HDFC Regalia Gold: locate current official MITC/product pages (Tier 1/2), archive into research folders, correct any wrong rates/caps/exclusions in `cards.json`, fill NOTES.md tables with real citations. **The owner dates the Verified column — an agent must not mark a rule verified.** Patch bump per correction.
 **DoD:** all three cards' rules have Tier 1/2 citations; `lastVerified` updated by owner.
 **Status (2026-07-10):** Done with one flagged exception. Axis ACE and HDFC Swiggy are fully Tier-1-cited (real dated MITC/T&C PDFs archived in `research/`, confirmed from the genuine `axisbank.com`/`hdfcbank.com` domains — `hdfc.bank.in` also treated as legitimate after `hdfcbank.com` 301-redirected to it). HDFC Regalia Gold's base and Myntra-family rules are Tier-1-cited; **`hdfc_regalia_gold_smartbuy_travel` remains unverified** — the SmartBuy portal pages are JS-rendered and returned no usable content via WebFetch or the browser tool (permission-denied on that banking domain); documented as an open question in NOTES.md rather than guess-corrected. `lastVerified` intentionally left untouched (owner-only per this task's own constraint) — dataset gate + full test suite green, `assembleDebug` compiles.
 
-### [x] C3 — Add card X (repeatable template task) — HDFC Millennia (card 4/10-25)
+### [ ] C3 — Add card X (repeatable template task) — HDFC Millennia (card 4/10-25) — **REDO (work lost)**
+**2026-07-11 audit:** the status below describes work whose file changes were never committed and are lost (no `research/hdfc/millennia/`, no `data/*` branch, `cards.json` still 3 cards) — task must be redone; the recovered findings are preserved in `docs/launch-directive.md` R1-3.
 `Model: sonnet (via /extract-card once F1 exists) · Prereqs: C0, F1 · Touches: research/, data/cards.json`
 **Steps:** owner picks the card (coverage-driven, guide §7 — own cards first, then high-circulation power-user cards); run F1 skill on archived sources; review branch diff; merge; minor bump. Repeat toward 10–25 cards.
 **DoD per card:** NOTES.md with citations; validator green; owner-approved diff.
