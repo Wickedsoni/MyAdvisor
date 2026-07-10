@@ -34,8 +34,9 @@ Redesign the UI to feel like a premium fintech app. Principles: Material 3 Expre
 
 **Reality check:** Material 3 *Expressive* APIs are only partially available in Compose **Multiplatform** (we're on `compose-material3` 1.11.0-alpha07). Use Expressive components where they exist in CMP; where they don't, achieve the expressive feel through the theme system (shape scale, motion tokens, typography) — do not fight missing APIs or add Android-only dependencies to `:shared`.
 
-### [ ] E1 — Design-system foundation
+### [x] E1 — Design-system foundation
 `Model: opus · Prereqs: none · Touches: :shared`
+**Status (2026-07-10):** Done. Theme tokens (`Color.kt` full M3 light+dark with surfaceContainer ladder — brand kept as deep emerald `0xFF006B5B`, evolved from the Phase 0 seed; `Type.kt` with tabular-figure rate styles; `Shape.kt` expressive scale + hero/pill tokens; `Motion.kt` M3 easing/duration + spec helpers) and 8 components (`RateBadge`, `CardTile`, `SectionHeader`, `EmptyState`, `LoadingSkeleton`/`ResultSkeleton`, `CaveatBanner`, `RouteChip`, `PrimaryButton`) built in `ui/theme/` + `ui/components/`, plus a pure-Kotlin `Format.kt` (commonMain-safe Indian-rupee/percent formatting). Components take primitive params (decoupled from `:domain`), used nowhere yet (migrate in E2/E3/E4). Previews hosted in androidMain `ComponentGallery.android.kt` (CMP `@Preview` resolves only on the android variant). Zero ViewModel/`:domain`/`:data` changes; all host tests green, `assembleDebug` builds; new palette verified on emulator in light + dark.
 **Context:** current theme `shared/src/commonMain/kotlin/com/wickedcoder/myadvisor/ui/theme/Theme.kt` (skeleton only); screens in `ui/home/`, `ui/recommend/`; brief above.
 **Create/Modify:**
 - `ui/theme/Color.kt` — full M3 color scheme, light + dark, from a deliberate brand seed (current seed green `0xFF1B5E4B` may be kept or replaced — document the choice)
