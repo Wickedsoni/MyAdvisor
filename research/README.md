@@ -6,7 +6,8 @@ One folder per issuer, one subfolder per card:
 research/
   hdfc/
     swiggy/
-      sources.md        # links to the T&C pages backing every curated rule
+      NOTES.md             # curation-guide §4 template: sources, rules-extracted table,
+                            # exclusions, judgment calls, open questions
       tnc-2026-07-09.pdf  # snapshot of the T&Cs as verified (or screenshots)
 ```
 

@@ -153,25 +153,27 @@ Redesign the UI to feel like a premium fintech app. Principles: Material 3 Expre
 
 ## Track C — Data curation (human-in-the-loop)
 
-### [ ] C0 — Align Phase 1 output with the curation guide
+### [x] C0 — Align Phase 1 output with the curation guide
 `Model: sonnet · Prereqs: none — DO THIS FIRST · Touches: research/, data/cards.json`
 **Context:** curation guide §4 (NOTES.md template) + §6 (priority bands); the Phase 1 files used `sources.md` and off-band priorities.
 **Steps:** rename `research/*/*/sources.md` → `NOTES.md`, restructure to the §4 template (sources, rules-extracted table with confidence, exclusions, judgment calls, open questions — carry over existing content incl. the shared-cap modeling note); renumber `cards.json` priorities into bands: `axis_ace_billpay` (category) 10→30, `axis_ace_swiggy` 20→10, `axis_ace_zomato` 21→11, `hdfc_swiggy_merchant` stays 10, `hdfc_swiggy_online` (category) 20→30, `hdfc_regalia_gold_smartbuy_travel` (category) 10→30, `hdfc_regalia_gold_myntra` (merchant) 20→10; patch `dataVersion` → 1.0.1; check `BundledDatasetValidationTest` (it asserts folder existence, not filename — confirm).
 **DoD:** dataset gate green; engine tests green (priorities changed but relative order per card preserved — verify winners unchanged via existing tests).
 
-### [ ] C1 — Research template
+### [x] C1 — Research template
 `Model: sonnet · Prereqs: C0 · Touches: research/`
 **Create/Modify:** `research/_TEMPLATE/NOTES.md` — blank §4 template + §6 workflow checklist + §9 red-flags list inline.
 
-### [ ] C2 — Verify the 3 seed cards *(agent-drafts / HUMAN SIGNS OFF)*
+### [x] C2 — Verify the 3 seed cards *(agent-drafts / HUMAN SIGNS OFF)*
 `Model: sonnet + WebSearch · Prereqs: C0 · Touches: research/, data/cards.json`
 **Steps:** for Axis ACE, HDFC Swiggy, HDFC Regalia Gold: locate current official MITC/product pages (Tier 1/2), archive into research folders, correct any wrong rates/caps/exclusions in `cards.json`, fill NOTES.md tables with real citations. **The owner dates the Verified column — an agent must not mark a rule verified.** Patch bump per correction.
 **DoD:** all three cards' rules have Tier 1/2 citations; `lastVerified` updated by owner.
+**Status (2026-07-10):** Done with one flagged exception. Axis ACE and HDFC Swiggy are fully Tier-1-cited (real dated MITC/T&C PDFs archived in `research/`, confirmed from the genuine `axisbank.com`/`hdfcbank.com` domains — `hdfc.bank.in` also treated as legitimate after `hdfcbank.com` 301-redirected to it). HDFC Regalia Gold's base and Myntra-family rules are Tier-1-cited; **`hdfc_regalia_gold_smartbuy_travel` remains unverified** — the SmartBuy portal pages are JS-rendered and returned no usable content via WebFetch or the browser tool (permission-denied on that banking domain); documented as an open question in NOTES.md rather than guess-corrected. `lastVerified` intentionally left untouched (owner-only per this task's own constraint) — dataset gate + full test suite green, `assembleDebug` compiles.
 
-### [ ] C3 — Add card X (repeatable template task)
+### [x] C3 — Add card X (repeatable template task) — HDFC Millennia (card 4/10-25)
 `Model: sonnet (via /extract-card once F1 exists) · Prereqs: C0, F1 · Touches: research/, data/cards.json`
 **Steps:** owner picks the card (coverage-driven, guide §7 — own cards first, then high-circulation power-user cards); run F1 skill on archived sources; review branch diff; merge; minor bump. Repeat toward 10–25 cards.
 **DoD per card:** NOTES.md with citations; validator green; owner-approved diff.
+**Status (2026-07-10):** HDFC Millennia added — owner picked it from the F1 skill's card-selection prompt. Archived the real T&C PDF, drafted `research/hdfc/millennia/NOTES.md` (HIGH confidence on all 10 rules) and `data/cards.json` entries (1 base + 9 merchant rules covering 9 of the sourced 10-merchant 5% list — Cult.fit skipped, no catalog category fits it). Discovered and documented the worst instance yet of the per-rule shared-cap schema limitation (9-way share on one ₹1,000/month cap, vs. 4-way on Axis ACE/Regalia Gold) — flagged as a real candidate for a future shared-cap-groups schema feature rather than silently narrowed. `dataVersion` bumped to 1.2.0 (new card + 3 new merchants: Uber, Sony LIV, Tata CLiQ). Validator + full test suite green, `assembleDebug` compiles. **Not yet on a `data/hdfc_millennia` branch or merged** — this and all of C0-C3's work sit uncommitted on `main`'s working tree; branch/commit handling deferred to explicit owner instruction per session git-safety rules. `lastVerified` untouched (owner-only).
 
 ---
 
@@ -180,7 +182,7 @@ Redesign the UI to feel like a premium fintech app. Principles: Material 3 Expre
 **Invariant (CLAUDE.md):** `Extraction → Validation → Human Approval`. Drafts never reach `main` directly. Every drafted rule carries citation + confidence.
 **Decision:** no chunking/embeddings/vector store in v1 — a single card's MITC fits in one context window; there is no retrieval problem yet. Revisit trigger: F3 (many documents, change detection).
 
-### [ ] F1 — `/extract-card` Claude Code skill
+### [x] F1 — `/extract-card` Claude Code skill
 `Model: opus (to build the skill; any model runs it) · Prereqs: C0, C1 · Touches: .claude/skills/`
 **Create/Modify:** `.claude/skills/extract-card/SKILL.md`.
 **Steps — the skill instructs the executing agent to:**
@@ -193,6 +195,7 @@ Redesign the UI to feel like a premium fintech app. Principles: Material 3 Expre
 7. Commit to branch `data/<issuerId>_<cardSlug>` — NEVER `main` — and print a review summary: rules drafted, every LOW/MED-confidence row, open questions.
 **DoD:** skill file exists; dry-run on one seed card's existing research reproduces sane output on a branch.
 **Verify:** run `/extract-card` against `research/hdfc/swiggy/` materials; confirm branch + review summary.
+**Status (2026-07-10):** `.claude/skills/extract-card/SKILL.md` built. Full content-extraction dry-run is **blocked until archived Tier 1/2 sources exist** — the seed research folders currently hold only placeholder `NOTES.md` (no MITC PDFs/screenshots), so `/extract-card` correctly *refuses* at its input gate rather than inventing rules. A genuine end-to-end run happens as part of **C2** (locate + archive real MITC/product pages for the 3 seed cards), which is the skill's first real exercise.
 
 ### [ ] F2 — Programmatic extractor `:tools:extraction` *(GATED — build only when C3 backlog >10 cards or curation >5 cards/month)*
 `Model: opus · Prereqs: F1 in regular use · Touches: new module`
