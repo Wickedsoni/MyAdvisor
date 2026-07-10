@@ -154,8 +154,9 @@ Redesign the UI to feel like a premium fintech app. Principles: Material 3 Expre
 
 ## Track C — Data curation (human-in-the-loop)
 
-### [ ] C0 — Align Phase 1 output with the curation guide — **REDO (work lost)**
-**2026-07-11 audit:** this session's file changes were never committed and are lost (`research/` still has `sources.md`, priorities still off-band) — task must be redone; see `docs/launch-directive.md` I-1 / R1-1.
+### [x] C0 — Align Phase 1 output with the curation guide — **REDONE as R1-1**
+**2026-07-11 audit:** the original session's file changes were never committed and were lost — see `docs/launch-directive.md` I-1 / R1-1.
+**Status (2026-07-11, redo):** Done on branch `data/r1-1-curation-alignment`. `sources.md` → `NOTES.md` per template (still explicitly UNVERIFIED; the lost C2 findings recorded as open questions for R1-2, not applied as facts); priorities renumbered into §6 bands; `dataVersion` → 1.0.1. Dataset gate + full suite green; winners unchanged.
 `Model: sonnet · Prereqs: none — DO THIS FIRST · Touches: research/, data/cards.json`
 **Context:** curation guide §4 (NOTES.md template) + §6 (priority bands); the Phase 1 files used `sources.md` and off-band priorities.
 **Steps:** rename `research/*/*/sources.md` → `NOTES.md`, restructure to the §4 template (sources, rules-extracted table with confidence, exclusions, judgment calls, open questions — carry over existing content incl. the shared-cap modeling note); renumber `cards.json` priorities into bands: `axis_ace_billpay` (category) 10→30, `axis_ace_swiggy` 20→10, `axis_ace_zomato` 21→11, `hdfc_swiggy_merchant` stays 10, `hdfc_swiggy_online` (category) 20→30, `hdfc_regalia_gold_smartbuy_travel` (category) 10→30, `hdfc_regalia_gold_myntra` (merchant) 20→10; patch `dataVersion` → 1.0.1; check `BundledDatasetValidationTest` (it asserts folder existence, not filename — confirm).
