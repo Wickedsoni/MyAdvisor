@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wickedcoder.myadvisor.domain.model.Card
 import com.wickedcoder.myadvisor.ui.cards.CardsViewModel
+import com.wickedcoder.myadvisor.ui.recommend.RecommendScreen
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
@@ -43,10 +44,11 @@ fun HomeScreen(viewModel: CardsViewModel = koinViewModel()) {
     Scaffold { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             TabRow(selectedTabIndex = selectedTab) {
-                Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text("Catalog") })
+                Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text("Recommend") })
+                Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text("Catalog") })
                 Tab(
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 },
                     text = { Text("My Cards (${state.ownedCardIds.size})") },
                 )
             }
@@ -62,7 +64,8 @@ fun HomeScreen(viewModel: CardsViewModel = koinViewModel()) {
                             textAlign = TextAlign.Center,
                         )
                     }
-                    selectedTab == 0 -> CardList(
+                    selectedTab == 0 -> RecommendScreen()
+                    selectedTab == 1 -> CardList(
                         cards = state.catalog,
                         state = state,
                         emptyText = "No cards in the catalog yet.",

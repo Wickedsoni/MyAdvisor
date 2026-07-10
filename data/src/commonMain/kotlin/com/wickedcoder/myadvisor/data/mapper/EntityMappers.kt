@@ -5,6 +5,7 @@ import com.wickedcoder.myadvisor.data.db.CategoryEntity
 import com.wickedcoder.myadvisor.data.db.ExclusionEntity
 import com.wickedcoder.myadvisor.data.db.IssuerEntity
 import com.wickedcoder.myadvisor.data.db.MerchantEntity
+import com.wickedcoder.myadvisor.data.db.MerchantFamilyEntity
 import com.wickedcoder.myadvisor.data.db.RewardRuleEntity
 import com.wickedcoder.myadvisor.domain.model.Cap
 import com.wickedcoder.myadvisor.domain.model.CapPeriod
@@ -16,6 +17,7 @@ import com.wickedcoder.myadvisor.domain.model.ExclusionScope
 import com.wickedcoder.myadvisor.domain.model.ExclusionTarget
 import com.wickedcoder.myadvisor.domain.model.Issuer
 import com.wickedcoder.myadvisor.domain.model.Merchant
+import com.wickedcoder.myadvisor.domain.model.MerchantFamily
 import com.wickedcoder.myadvisor.domain.model.PaymentRoute
 import com.wickedcoder.myadvisor.domain.model.Reward
 import com.wickedcoder.myadvisor.domain.model.RewardRule
@@ -33,6 +35,8 @@ import kotlinx.datetime.LocalDate
 fun IssuerEntity.toDomain() = Issuer(id = id, name = name)
 
 fun CategoryEntity.toDomain() = Category(id = id, name = name)
+
+fun MerchantFamilyEntity.toDomain() = MerchantFamily(id = id, name = name)
 
 fun MerchantEntity.toDomain() = Merchant(
     id = id,

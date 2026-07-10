@@ -36,6 +36,9 @@ interface CatalogDao {
 
     @Query("SELECT * FROM merchants ORDER BY id")
     suspend fun getMerchants(): List<MerchantEntity>
+
+    @Query("SELECT * FROM merchant_families ORDER BY id")
+    suspend fun getMerchantFamilies(): List<MerchantFamilyEntity>
 }
 
 @Dao

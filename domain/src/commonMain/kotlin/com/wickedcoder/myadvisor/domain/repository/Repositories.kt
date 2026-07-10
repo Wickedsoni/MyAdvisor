@@ -4,6 +4,7 @@ import com.wickedcoder.myadvisor.domain.model.Card
 import com.wickedcoder.myadvisor.domain.model.Category
 import com.wickedcoder.myadvisor.domain.model.Issuer
 import com.wickedcoder.myadvisor.domain.model.Merchant
+import com.wickedcoder.myadvisor.domain.model.MerchantFamily
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
@@ -17,6 +18,7 @@ interface CardCatalogRepository {
     suspend fun getIssuers(): List<Issuer>
     suspend fun getCategories(): List<Category>
     suspend fun getMerchants(): List<Merchant>
+    suspend fun getMerchantFamilies(): List<MerchantFamily>
 }
 
 /**

@@ -9,6 +9,7 @@ import com.wickedcoder.myadvisor.domain.model.Card
 import com.wickedcoder.myadvisor.domain.model.Category
 import com.wickedcoder.myadvisor.domain.model.Issuer
 import com.wickedcoder.myadvisor.domain.model.Merchant
+import com.wickedcoder.myadvisor.domain.model.MerchantFamily
 import com.wickedcoder.myadvisor.domain.repository.CardCatalogRepository
 import com.wickedcoder.myadvisor.domain.repository.DatasetMeta
 import com.wickedcoder.myadvisor.domain.repository.DatasetMetaRepository
@@ -35,6 +36,9 @@ class RoomCardCatalogRepository(
 
     override suspend fun getMerchants(): List<Merchant> =
         catalogDao.getMerchants().map { it.toDomain() }
+
+    override suspend fun getMerchantFamilies(): List<MerchantFamily> =
+        catalogDao.getMerchantFamilies().map { it.toDomain() }
 }
 
 class RoomUserCardsRepository(
