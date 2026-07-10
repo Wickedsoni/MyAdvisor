@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "dataVersion": "1.0.0",
+  "dataVersion": "1.0.1",
   "generatedAt": "2026-07-10",
 
   "issuers": [
@@ -51,7 +51,7 @@
       "rules": [
         {
           "id": "axis_ace_billpay",
-          "priority": 10,
+          "priority": 30,
           "condition": { "type": "category", "categoryId": "utilities" },
           "reward": { "effectiveRatePct": 5.0, "earnDescription": "5% cashback on bill payments via Google Pay" },
           "cap": { "amountInr": 500, "period": "CALENDAR_MONTH" },
@@ -59,14 +59,14 @@
         },
         {
           "id": "axis_ace_swiggy",
-          "priority": 20,
+          "priority": 10,
           "condition": { "type": "merchant", "merchantId": "swiggy" },
           "reward": { "effectiveRatePct": 4.0, "earnDescription": "4% cashback on Swiggy (shared ₹500 cap with Zomato, modeled per-merchant)" },
           "cap": { "amountInr": 500, "period": "CALENDAR_MONTH" }
         },
         {
           "id": "axis_ace_zomato",
-          "priority": 21,
+          "priority": 11,
           "condition": { "type": "merchant", "merchantId": "zomato" },
           "reward": { "effectiveRatePct": 4.0, "earnDescription": "4% cashback on Zomato (shared ₹500 cap with Swiggy, modeled per-merchant)" },
           "cap": { "amountInr": 500, "period": "CALENDAR_MONTH" }
@@ -102,7 +102,7 @@
         },
         {
           "id": "hdfc_swiggy_online",
-          "priority": 20,
+          "priority": 30,
           "condition": { "type": "category", "categoryId": "online_shopping" },
           "reward": { "effectiveRatePct": 5.0, "earnDescription": "5% cashback on online spends" },
           "cap": { "amountInr": 1500, "period": "CALENDAR_MONTH" }
@@ -133,7 +133,7 @@
       "rules": [
         {
           "id": "hdfc_regalia_gold_smartbuy_travel",
-          "priority": 10,
+          "priority": 30,
           "condition": { "type": "category", "categoryId": "travel" },
           "reward": {
             "effectiveRatePct": 6.65,
@@ -145,7 +145,7 @@
         },
         {
           "id": "hdfc_regalia_gold_myntra",
-          "priority": 20,
+          "priority": 10,
           "condition": { "type": "merchant", "merchantId": "myntra" },
           "reward": {
             "effectiveRatePct": 6.65,
