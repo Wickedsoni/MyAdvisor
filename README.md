@@ -30,6 +30,10 @@ holds the per-issuer audit trail behind every curated rule.
 
 CI (GitHub Actions) builds, lints, and runs the host tests on every push/PR.
 
+## For AI agents / contributors
+
+Start with **[CLAUDE.md](CLAUDE.md)** — architecture rules, naming conventions, commands, and the per-task definition of done. The task backlog lives in **[docs/agent-roadmap.md](docs/agent-roadmap.md)** (one agent session per task). The canonical design docs (roadmap SSOT, rule-engine spec, data model, ADRs, curation guide) are in **[docs/design/](docs/design/)**.
+
 ## Key stack decisions
 
 - **Room KMP** (bundled SQLite driver) — keeps ADR-002; Room supports
